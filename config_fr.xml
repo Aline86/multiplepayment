@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>multiplepayment</name>
+    <displayName><![CDATA[Multiple Payment]]></displayName>
+    <version><![CDATA[0.1.0]]></version>
+    <description><![CDATA[Module d&#039;affichage de paiement en plusieurs fois]]></description>
+    <author><![CDATA[Claire-Aline Haestie]]></author>
+    <tab><![CDATA[billing_invoicing]]></tab>
+	<confirmUninstall><![CDATA[Êtes-vous sûr de vouloir désinstaller ce module ?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
