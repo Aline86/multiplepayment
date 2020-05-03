@@ -1,19 +1,17 @@
-<form action='' method='POST' id='form'>
-    <div class='form-group'>
-        <label for='number'>En combien de fois souhaitez-vous payer ?</label>
-        <br />
-        <input id='number' type='number' name='times' />
-        <input type='submit' name='submit_times' />
+{if ($price >= 100) }
+<div class='payment'>
+    <div class='title'>
+        <div class='line_times'></div>
+        <div class='times'>ou payez en {$times}X</div>
+        <div class='line_times'> </div>
     </div>
-    <ul>
-   
     {for $i=0 to $times-1}
-
-    <strong>{$array[$i]} : {$price / $times}</strong>
+    <div class='flex'>
+        <div class='text'> {number_format($price*1.2/$times,2,',','')} € TTC</div>
+        <div class='line'></div>
+        <div class='text2'>{$array[$i]}</div><br />
+    </div>
     <br />
     {/for}
-
-    </ul>
 </div>
-
-</form>
+{/if}

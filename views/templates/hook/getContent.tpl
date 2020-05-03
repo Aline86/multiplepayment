@@ -6,43 +6,21 @@
   </div>
 {/if}
 
-<form method='post' action='' class='defaultForm form-horizontal'>
-  <div class='panel'>
-    <div class='panel-heading'>
-      <i class='icon-cogs'></i>
-          La cofiguration de mon module
+<form action='' method='POST' id='form'>
+    <div class='form-group'>
+        <label for='grade'>Configurer le module pour l'affichage du paiement en plusieurs fois</label>
+        <select id='grade' class='form-control' name='times'>
+             <option value=''>Payer en plusieurs fois</option>
+             <option value='2' {if isset($thetime) && $thetime == '2'}selected="selected"{/if}>Paiement 2 X</option>
+             <option value='3' {if isset($thetime) && $thetime == '3'}selected="selected"{/if}>Paiement 3 X</option>
+             <option value='4' {if isset($thetime) && $thetime == '4'}selected="selected"{/if}>Paiement 4 X</option>
+             <option value='5' {if isset($thetime) && $thetime == '5'}selected="selected"{/if}>Paiement 5 X</option>
+          </select>
+        <input class='submit' type='submit' name='submit_times' />
     </div>
-    <div class='form-wrapper'>
-      <div class='form-group'>
-        <label class='control-label col-lg-3'>Activer les notes :</label>
-        <div class='col-lg-9'>
-          <img src='../img/admin/enabled.gif' alt='' />
-          <input type='radio' id='enable_grades_1' name='enable_grades' value='1' {if $enable_grades eq '1'}checked{/if} />
-          
-          <label class='t' for='enable_grades_1'>Oui</label>
-          <img src='../img/admin/disabled.gif' alt='' />
-          <input type='radio' id='enable_grades_0' name='enable_grades' value='0' {if $enable_grades ne '1'}checked{/if} />
-          <label class='t' for='enable_grades_0'>Non</label>
-        </div>
-      </div>
-      <div class='form-group'>
-        <label class='control-label col-lg-3'>Activer les commentaires :</label>
-        <div class='col-lg-9'>
-          <img src='../img/admin/enabled.gif' alt='' />
-          <input type='radio' id='enable_comments_1' name='enable_comments' value='1' />
-          <label class='t' for='enable_comments_1'>Oui</label>
-          <img src='../img/admin/disabled.gif' alt='' />
-          <input type='radio' id='enable_comments_0' name='enable_comments' value='0'
-            checked />
-          <label class='t' for='enable_comments_0'>Non</label>
-        </div>
-      </div>
-    </div>
-    <div class='panel-footer'>
-    <button class='btn btn-default pull-right' name='submit_mymodcomments_form'
-    value='1' type='submit'>
-          <i class='process-icon-save'></i> Enregistrer
-    </button>
+    </form>
+{if isset($configerror) && $configerror eq 'error'}
+  <div class='error'>
+  Veuillez revoir les paramètres de configuration.
   </div>
-</div>
-</form>
+{/if}

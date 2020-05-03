@@ -29,109 +29,103 @@
                 $this->warning = $this->l('Aucun nom fourni');
             }
         }
-
-
             public function assignConfiguration()
 
         {
-            $enable_grades = Configuration::get('MYMOD_GRADES');
-            $enable_comments = Configuration::get('MYMOD_COMMENTS');
-            $this->context->smarty->assign('enable_grades', $enable_grades);
-            $this->context->smarty->assign('enable_comments', $enable_comments);
+            $times = Configuration::get('TIMES');            
+            $this->context->smarty->assign('thetime', $times);   
         }
   
         public function processConfiguration()
         {
-            if (Tools::isSubmit('submit_mymodcomments_form'))
+            if (Tools::isSubmit('submit_times'))
             {
-                $enable_grades = Tools::getValue('enable_grades');
-                $enable_comments = Tools::getValue('enable_comments');
-                Configuration::updateValue('MYMOD_GRADES', $enable_grades);
-                Configuration::updateValue('MYMOD_COMMENTS', $enable_comments);
-                $this->context->smarty->assign('confirmation', 'ok');
+                $times = Tools::getValue('times');
+                if($times==2 || $times==3 || $times==4 || $times==5){
+                    Configuration::updateValue('TIMES', $times);
+                    $this->context->smarty->assign('confirmation', 'ok');
+                }else{
+                    $this->context->smarty->assign('configerror', 'error');
+                }
+                
             }
-
         }
 
         public function getContent()
         {
+            $this->context->controller->addCSS($this->_path.'views/css/getContent.css', 'all');
             $this->processConfiguration();
             $this->assignConfiguration();
-            return $this->display(__FILE__, 'getContent.tpl');
-            
+            return $this->display(__FILE__, 'getContent.tpl');            
         }
 
             public function install()
             {
-                if(parent::install() || $this->registerHook('MultiplePayment')){
+                if(parent::install() || $this->registerHook('MultiplePayment')
+                    || $this->registerHook('displayHeader')){
                     $this->registerHook('MultiplePayment');
+                    $this->registerHook('displayHeader');
+                    $sql_file = dirname(__FILE__).'/install/install.sql';
+                    $this->loadSQLFile($sql_file);
                     return true;
                 }
-                
+            }
+            /*public function uninstall()
+            {
+                // Appeler la méthode de désinstallation parente
+                if (!parent::uninstall()) {
+                    return false;
+                }
+                $sql_file = dirname(__FILE__).'/install/uninstall.sql';
+                if (!$this->loadSQLFile($sql_file)) {
+                    return false;
+                }
+                // Effacer les valeurs de configuration
+                Configuration::deleteByName('TIMES');
+                // Tout s’est bien passé !
+                return true;
+            }*/
+            public function loadSQLFile($sql_file)
+            {
+                $sql_content = file_get_contents($sql_file);
+                $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
+                $sql_requests = preg_split('/;\s*[\r\n]+/', $sql_content);
+                $result = true;
+                foreach ($sql_requests as $request) {
+                    if (!empty($request)) {
+                        $result &= Db::getInstance()->execute(trim($request));
+                    }
+                }
+                return $result;
+            }
+            
+            public function hookDisplayHeader($params)
+            {
+                $this->context->controller->addCSS($this->_path.'views/css/multiplepayment.css', 'all');
+                $this->context->controller->addJS($this->_path.'views/js/multiplepayment.js');
             }
 
             public function hookMultiplePayment($params)
-
             {
-                $this->processMultiplePayment();
                 $this->assignMultiplePayment();
                 return $this->display(__FILE__, 'multiplepayment.tpl');    
             }
 
-            
-
-            public function processMultiplePayment()
-            {
-            if (Tools::isSubmit('submit_times'))
-                {
-                    $id_product = Tools::getValue('id_product');
-                    $times = Tools::getValue('times');
-                    $insert = array(
-                        'id_product' => (int)$id_product,
-                        'times' => (int)$times,
-                            );
-                    Db::getInstance()->insert('multiplepayment', $insert);  
-   
-                }
-
-            }
-
             public function assignMultiplePayment()
             {
-            $id_product = Tools::getValue('id_product');
-            $times = Tools::getValue('times');
-           
-
+            $id_product = Tools::getValue('id_product');           
+            $times = Configuration::get('TIMES');
             $price = Db::getInstance()->executeS('
-
                     SELECT * FROM '._DB_PREFIX_.'product
-
-                    WHERE id_product = '.(int)$id_product);
+                    WHERE id_product = '.(int)$id_product);                 
                 foreach($price as $p){
-                    echo $p['price'];
+                   
                     if(isset($p['price'])){
                         $this->context->smarty->assign('price', $p['price']);
-                    }
-            
+                    }           
                 }
                 $this->context->smarty->assign('times', $times);
-                $payment_array=['aujourd\'hui', 'dans un mois', 'dans deux mois', 'dans trois mois', 'dans cinq mois'];
+                $payment_array=['aujourd\'hui', 'dans 1 mois', 'dans 2 mois', 'dans 3 mois', 'dans 5 mois'];
                 $this->context->smarty->assign('array', $payment_array);
-
-            }
-
-            public function hookDisplayProductTabContent($params)
-
-            {
-
-            $this->processProductTabContent();
-
-            $this->assignProductTabContent();
-
-            return $this->display(__FILE__, 'displayProductTabContent.tpl');
-
-            }
-
-
-        
+            }        
     }
