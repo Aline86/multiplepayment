@@ -65,8 +65,6 @@
                     || $this->registerHook('displayHeader')){
                     $this->registerHook('MultiplePayment');
                     $this->registerHook('displayHeader');
-                    $sql_file = dirname(__FILE__).'/install/install.sql';
-                    $this->loadSQLFile($sql_file);
                     return true;
                 }
             }
