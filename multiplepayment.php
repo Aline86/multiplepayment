@@ -65,21 +65,10 @@
                     || $this->registerHook('displayHeader')){
                     $this->registerHook('MultiplePayment');
                     $this->registerHook('displayHeader');
-
                     return true;
                 }
             }
-         public function uninstall()
-            {
-                // Appeler la méthode de désinstallation parente
-                if (!parent::uninstall()) {
-                    return false;
-                }
-                // Effacer les valeurs de configuration
-                Configuration::deleteByName('TIMES');
-                // Tout s’est bien passé !
-                return true;
-            }
+         
             public function loadSQLFile($sql_file)
             {
                 $sql_content = file_get_contents($sql_file);
