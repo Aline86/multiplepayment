@@ -1,4 +1,4 @@
-{if ($price >= 100) }
+{if ($price >= $from_the_price) }
 <div class='payment'>
     <div class='title'>
         <div class='line_times'></div>

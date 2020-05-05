@@ -13,7 +13,7 @@
             $this->author = 'Claire-Aline Haestie';
             $this->need_instance = 0;
             $this->ps_versions_compliancy = [
-                'min' => '1.7',
+                'min' => '1.6',
                 'max' => _PS_VERSION_
             ];
             $this->bootstrap = true;
@@ -41,8 +41,10 @@
             if (Tools::isSubmit('submit_times'))
             {
                 $times = Tools::getValue('times');
-                if($times==2 || $times==3 || $times==4 || $times==5){
-                    Configuration::updateValue('TIMES', $times);
+                $from_price = Tools::getValue('from_price');
+                if($times>=1 || $from_price >= 1){
+                    Configuration::updateValue('MULTIPLEPAYMENT_TIMES', $times);
+                    Configuration::updateValue('MULTIPLEPAYMENT_FROMPRICE', $from_price);
                     $this->context->smarty->assign('confirmation', 'ok');
                 }else{
                     $this->context->smarty->assign('configerror', 'error');
@@ -68,7 +70,7 @@
                     return true;
                 }
             }
-         
+            
             public function loadSQLFile($sql_file)
             {
                 $sql_content = file_get_contents($sql_file);
@@ -91,25 +93,33 @@
 
             public function hookMultiplePayment($params)
             {
-                $this->assignMultiplePayment();
+                $this->assignMultiplePayment($params);
                 return $this->display(__FILE__, 'multiplepayment.tpl');    
             }
 
-            public function assignMultiplePayment()
+            public function assignMultiplePayment($params)
             {
-            $id_product = Tools::getValue('id_product');           
-            $times = Configuration::get('TIMES');
-            $price = Db::getInstance()->executeS('
-                    SELECT * FROM '._DB_PREFIX_.'product
-                    WHERE id_product = '.(int)$id_product);                 
-                foreach($price as $p){
-                   
-                    if(isset($p['price'])){
-                        $this->context->smarty->assign('price', $p['price']);
-                    }           
+                $times = Configuration::get('MULTIPLEPAYMENT_TIMES');
+              
+                $from_price = Configuration::get('MULTIPLEPAYMENT_FROMPRICE');
+                
+                $productinfo=$params;
+                
+                foreach($productinfo as $product){
+                    foreach($product as $p =>$value){
+                        if($p=='price_tax_exc'){
+                            $this->context->smarty->assign('price', $value); 
+                        }
+                    }
+                    
                 }
+                $payment_array=['aujourd\'hui'];
+                
+                for($i=1; $i<$times; $i++){
+                    array_push($payment_array, 'dans '.$i.' mois');  
+                }
+                $this->context->smarty->assign('from_the_price', $from_price); 
                 $this->context->smarty->assign('times', $times);
-                $payment_array=['aujourd\'hui', 'dans 1 mois', 'dans 2 mois', 'dans 3 mois', 'dans 5 mois'];
                 $this->context->smarty->assign('array', $payment_array);
             }        
     }
