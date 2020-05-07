@@ -46,6 +46,8 @@
                     Configuration::updateValue('MULTIPLEPAYMENT_TIMES', $times);
                     Configuration::updateValue('MULTIPLEPAYMENT_FROMPRICE', $from_price);
                     $this->context->smarty->assign('confirmation', 'ok');
+                    $this->context->smarty->assign('time', $times);
+                    $this->context->smarty->assign('from_prices', $from_price);
                 }else{
                     $this->context->smarty->assign('configerror', 'error');
                 }
