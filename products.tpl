@@ -90,7 +90,7 @@
             {include file='catalog/_partials/product-prices.tpl'}
           {/block}
           {block name='multiplepayment'}
-            {hook h=MultiplePayment}
+            {hook h=MultiplePayment product=$product type="price"}
           {/block}
           <div class="product-information">
             {block name='product_description_short'}

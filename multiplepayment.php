@@ -104,10 +104,8 @@
                 $times = Configuration::get('MULTIPLEPAYMENT_TIMES');
               
                 $from_price = Configuration::get('MULTIPLEPAYMENT_FROMPRICE');
-                
-                $productinfo=$params;
-                
-                foreach($productinfo as $product){
+
+                foreach($params as $product){
                     foreach($product as $p =>$value){
                         if($p=='price_tax_exc'){
                             $this->context->smarty->assign('price', $value); 
