@@ -32,8 +32,10 @@
             public function assignConfiguration()
 
         {
-            $times = Configuration::get('TIMES');            
-            $this->context->smarty->assign('thetime', $times);   
+            $times = Configuration::get('MULTIPLEPAYMENT_TIMES'); 
+            $from_prices = Configuration::get('MULTIPLEPAYMENT_FROMPRICE');            
+            $this->context->smarty->assign('time', $times);   
+            $this->context->smarty->assign('from_prices', $from_prices);  
         }
   
         public function processConfiguration()
@@ -42,7 +44,7 @@
             {
                 $times = Tools::getValue('times');
                 $from_price = Tools::getValue('from_price');
-                if($times>=1 || $from_price >= 1){
+                if($times>=1 && $from_price >= 1){
                     Configuration::updateValue('MULTIPLEPAYMENT_TIMES', $times);
                     Configuration::updateValue('MULTIPLEPAYMENT_FROMPRICE', $from_price);
                     $this->context->smarty->assign('confirmation', 'ok');
@@ -101,25 +103,25 @@
 
             public function assignMultiplePayment($params)
             {
-                $times = Configuration::get('MULTIPLEPAYMENT_TIMES');
-              
+                $times = Configuration::get('MULTIPLEPAYMENT_TIMES');              
                 $from_price = Configuration::get('MULTIPLEPAYMENT_FROMPRICE');
-
+                $last_payment=0;
                 foreach($params as $product){
                     foreach($product as $p =>$value){
                         if($p=='price_tax_exc'){
-                            $this->context->smarty->assign('price', $value); 
+                            $this->context->smarty->assign('price', $value);
+                            $last_payment=$value;
                         }
-                    }
-                    
+                    }                   
                 }
-                $payment_array=['aujourd\'hui'];
-                
+                $last_price = number_format($last_payment*1.2-round($last_payment*1.2/$times, 2)*($times-1), 2);       
+                $payment_array=['aujourd\'hui'];                
                 for($i=1; $i<$times; $i++){
                     array_push($payment_array, 'dans '.$i.' mois');  
                 }
                 $this->context->smarty->assign('from_the_price', $from_price); 
                 $this->context->smarty->assign('times', $times);
+                $this->context->smarty->assign('last', $last_price);
                 $this->context->smarty->assign('array', $payment_array);
             }        
     }
